@@ -1,0 +1,7 @@
+README.md
+setup.py
+trpy/__init__.py
+trpy.egg-info/PKG-INFO
+trpy.egg-info/SOURCES.txt
+trpy.egg-info/dependency_links.txt
+trpy.egg-info/top_level.txt

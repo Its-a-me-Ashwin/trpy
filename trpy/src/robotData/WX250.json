@@ -1,0 +1,75 @@
+{
+    "1": {
+        "name": "BASE",
+        "min": 1050,
+        "max": 3050,
+        "midpoint": 2050,
+        "minAngle": -90,
+        "maxAngle" : 90
+    },
+    "2": {
+        "name": "SHOULDER_1",
+        "min": 785,
+        "max": 3340,
+        "midpoint": 2062,
+        "minAngle": -90,
+        "maxAngle" : 90
+    },
+    "3": {
+        "name": "SHOULDER_2",
+        "min": 870,
+        "max": 3420,
+        "midpoint": 2145,
+        "minAngle": -90,
+        "maxAngle" : 90
+    },
+    "4": {
+        "name": "ELBOW_1",
+        "min": 1000,
+        "max": 3100,
+        "midpoint": 2050,
+        "minAngle": -90,
+        "maxAngle": 90
+    },
+    "5": {
+        "name": "ELBOW_2",
+        "min": 1110,
+        "max": 3160,
+        "midpoint": 2135,
+        "minAngle": -90,
+        "maxAngle": 90    },
+    "6": {
+        "name": "WRIST_1",
+        "min": 960,
+        "max": 2990,
+        "midpoint": 1975,
+        "minAngle": -90,
+        "maxAngle" : 90
+    },
+    "7": {
+        "name": "WRIST_2",
+        "min": 1060,
+        "max": 3120,
+        "midpoint": 2090,
+        "minAngle": -90,
+        "maxAngle" : 90
+    },
+    "8": {
+        "name": "WRIST_3",
+        "min": 1015,
+        "max": 3010,
+        "midpoint": 2012,
+        "minAngle": -90,
+        "maxAngle" : 90
+    },
+    "9": {
+        "name": "GRIPPER",
+        "min": 1460,
+        "max": 2800,
+        "midpoint": 2130
+    },
+    "coupledJoints" :  {
+        "2": "3",  
+        "4": "5"
+    }
+}
