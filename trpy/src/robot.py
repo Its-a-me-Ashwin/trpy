@@ -391,6 +391,19 @@ class RobotArm:
         elif dxl_error != 0:
             print(f"[ID:{dxl_id}] {self.packetHandler.getRxPacketError(dxl_error)}")
 
+    def keyboard_control(self, disable_when_done, verbose=False):
+        """
+        This function is allows a user to control the robot via the keyboard with a few set of inputs.
+        """
+        if verbose:
+            print("Key bindings")
+
+        ## TODO add control logic
+
+        if disable_when_done:
+            for joint_id in self.joint_ids:
+                self.disable_torque(joint_id)
+        return 
     def close(self):
         """
         Close the port when done.
