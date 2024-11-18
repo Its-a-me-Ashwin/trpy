@@ -301,6 +301,7 @@ class RobotArm:
                     time.sleep(0.5)  # Debounce delay
                 time.sleep(0.01)
 
+        ### stop_signal = threading.Event()
         gripper_thread = threading.Thread(target=gripper_control)
         gripper_thread.start()
 
@@ -316,8 +317,9 @@ class RobotArm:
             self.recording.data.append(data_point)
             await asyncio.sleep(interval)
 
-        self.recording_active = False
-        gripper_thread.join()
+        self.recording_active = False ## Also stops the thread.
+        if gripper_thread.is_alive():
+            gripper_thread.join()
         print("Recording completed.")
         return self.recording
 
