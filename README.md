@@ -10,7 +10,3 @@ It allows you to use a simple GUI to splice and edit the recordings.
 ## Supported Robot arms
 * WX-250 (Tested)
 * WX-450
-
-## THIS PROJECT IS STILL WORK IN PROGRESS
-* This repo will be updated regularly.
-* Once the package is fully working it will be pushed to pypi

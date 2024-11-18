@@ -1,12 +1,13 @@
 import numpy as np
 import asyncio
 import time
-from robot import RobotArm, JointAngles  # Assuming you have the classes in robot.py
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+from robot import RobotArm, JointAngles
 from robotConfigs import RobotData
 
-
 # Initialize the robot arm
-robot = RobotArm("WX250")
+robot = RobotArm("WX250", port="COM3")
 
 # Define an asynchronous function to handle recording
 async def record_motion(robot, duration, frequency):

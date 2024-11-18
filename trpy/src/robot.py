@@ -8,16 +8,21 @@ from robotConfigs import RobotData, pathToRobotData
 from recording import Recording
 import threading, keyboard
 from jointAngles import JointAngles
+import os
 
 class RobotArm:
     def __init__(self, robot_name, port="COM4"):
-        config_file = pathToRobotData.get(robot_name, None)
-        if config_file is None:
-            raise FileNotFoundError("Missing configuration file.")
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        robot_data_dir = os.path.join(base_dir, "robotData")
 
+        config_file = os.path.join(robot_data_dir, f"{robot_name}.json")
+        if not os.path.isfile(config_file):
+            raise FileNotFoundError(f"Configuration file for {robot_name} not found in {robot_data_dir}.")
+        
         M = RobotData[robot_name]["M"]
         Slist = RobotData[robot_name]["Slist"]
 
+        print(config_file)
         # Load the configuration from the JSON file
         with open(config_file, 'r') as json_file:
             data = json.load(json_file)
@@ -270,6 +275,10 @@ class RobotArm:
             self.current_angles[joint_id] = angle  # Update current angle
 
 
+    def release_servos(self):
+        for joint_id in self.motion_joint_ids:
+            self.disable_torque(joint_id)
+
     async def record(self, frequency=100):
         """
         Record the current joint angles at the specified frequency.
@@ -290,18 +299,17 @@ class RobotArm:
         def gripper_control():
             while self.recording_active:
                 if keyboard.is_pressed('c'):
-                    self.close_gripper()
+                    #self.close_gripper()
                     self.gripper_state = "CLOSED"
                     print("Gripper Closed")
                     time.sleep(0.5)  # Debounce delay
                 elif keyboard.is_pressed('o'):
-                    self.open_gripper()
+                    #self.open_gripper()
                     self.gripper_state = "OPEN"
                     print("Gripper Opened")
                     time.sleep(0.5)  # Debounce delay
                 time.sleep(0.01)
 
-        ### stop_signal = threading.Event()
         gripper_thread = threading.Thread(target=gripper_control)
         gripper_thread.start()
 
@@ -317,9 +325,8 @@ class RobotArm:
             self.recording.data.append(data_point)
             await asyncio.sleep(interval)
 
-        self.recording_active = False ## Also stops the thread.
-        if gripper_thread.is_alive():
-            gripper_thread.join()
+        self.recording_active = False
+        gripper_thread.join()
         print("Recording completed.")
         return self.recording
 
@@ -329,7 +336,7 @@ class RobotArm:
         """
         self.recording_active = False
 
-    def playBack(self, recording):
+    def playBack(self, recording, release_on_done=True):
         """
         Play back a recorded motion.
         This is a blocking operation.
@@ -376,7 +383,9 @@ class RobotArm:
                 next_time = recording.data[i + 1]['timestamp']
                 sleep_time = next_time - current_time
                 time.sleep(sleep_time)
-        print("Playback completed.")
+
+        if release_on_done:
+            self.release_servos()
 
 
     def move_to_position(self, dxl_id, position):
@@ -391,27 +400,21 @@ class RobotArm:
         elif dxl_error != 0:
             print(f"[ID:{dxl_id}] {self.packetHandler.getRxPacketError(dxl_error)}")
 
-    def keyboard_control(self, disable_when_done, verbose=False):
-        """
-        This function is allows a user to control the robot via the keyboard with a few set of inputs.
-        """
-        if verbose:
-            print("Key bindings")
-
-        ## TODO add control logic
-
-        if disable_when_done:
-            for joint_id in self.joint_ids:
-                self.disable_torque(joint_id)
-        return 
     def close(self):
         """
         Close the port when done.
         """
-        self.portHandler.closePort()
-        print("Port closed.")
+        if self.portHandler is not None:
+            self.portHandler.closePort()
+            print("Port closed.")
 
     def __del__(self):
-        for joint_id in self.joint_ids:
-            self.disable_torque(joint_id)
-        self.close()
+        try:
+            self.release_servos()
+        except AttributeError:  
+            self.close()
+        except Exception as e:
+            print("Failed to stop the motors. Re initialize the class to stop.", e)
+            self.close()
+        finally:
+            self.close()
