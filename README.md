@@ -9,4 +9,4 @@
 
 ## Supported Robot arms
 * WX-250 (Tested)
-* WX-450
+* WX-450 (Tested)
